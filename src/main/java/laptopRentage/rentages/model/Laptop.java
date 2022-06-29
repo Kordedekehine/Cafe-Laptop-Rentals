@@ -17,7 +17,7 @@ public class Laptop {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer laptopId;
     @Column
-    private String laptopCore_Gen;
+    private String laptopCore;
     @Column
     private String laptopType;
     @Column

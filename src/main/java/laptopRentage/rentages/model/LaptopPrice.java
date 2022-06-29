@@ -5,7 +5,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 @Data
 public class LaptopPrice extends RepresentationModel<LaptopPrice> {
-    private String laptopCore_Gen;
+    private String laptopCore;
     private String laptopColor;
     private String laptopType;
     private String laptopBrand;
