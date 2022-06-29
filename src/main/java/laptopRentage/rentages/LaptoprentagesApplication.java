@@ -1,13 +1,13 @@
-package movieRentage.rentages;
+package laptopRentage.rentages;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MovierentagesApplication {
+public class LaptoprentagesApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MovierentagesApplication.class, args);
+		SpringApplication.run(LaptoprentagesApplication.class, args);
 	}
 
 }
