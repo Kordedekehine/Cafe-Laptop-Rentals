@@ -10,7 +10,7 @@ import org.springframework.hateoas.RepresentationModel;
 @Data
 public class LaptopDto extends RepresentationModel<LaptopDto> {
 
-    private String laptopCore;
+    private String laptopCores;
     private String laptopType;
     private String laptopColor;
     private String laptopBrand;

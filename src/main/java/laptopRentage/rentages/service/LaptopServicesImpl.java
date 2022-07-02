@@ -9,19 +9,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 @Slf4j
-public class LaptopServiceImpl implements LaptopServices {
-    @Autowired
+public class LaptopServicesImpl implements LaptopServices {
+
     LaptopRepository laptopRepository;
 
-    @Autowired
     ModelMapper modelMapper =new ModelMapper();
+
+    @Autowired
+    public LaptopServicesImpl(LaptopRepository laptopRepository, ModelMapper modelMapper) {
+        this.laptopRepository = laptopRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public List<LaptopDto> findAllLaptops() {
@@ -46,18 +53,18 @@ public class LaptopServiceImpl implements LaptopServices {
         if (laptopDto.getLaptopColor()==null||laptopDto.getLaptopColor().toString().equals("")){
             throw new LaptopException("Laptop Color cannot be null");
         }
-        if (laptopDto.getLaptopCore().isBlank() || laptopDto.getLaptopCore() == null){
+        if (laptopDto.getLaptopCores().isBlank() || laptopDto.getLaptopCores() == null){
             throw new LaptopException("Laptop core cannot be null");
         }
         if (notAType(laptopDto.getLaptopType())){
             throw new LaptopException("Laptop type is invalid");
         }
         Laptop laptop = new Laptop();
-        laptop.setLaptopBrand(laptopBrandCheck(laptop.getLaptopCore()));
+        laptop.setLaptopBrand(laptopBrandCheck(laptop.getLaptopCores()));
         laptop.setLaptopColor(laptopDto.getLaptopColor());
         laptop.setLaptopType(laptop.getLaptopType());
         laptop.setLaptopPrice(laptop.getLaptopPrice());
-        laptop.setLaptopCore(laptop.getLaptopCore());
+        laptop.setLaptopCores(laptop.getLaptopCores());
         laptopRepository.save(laptop);
         return laptopDto;
     }
@@ -85,8 +92,8 @@ public class LaptopServiceImpl implements LaptopServices {
         }
         Pageable firstPageWithTwoElements = PageRequest.of(0, findAllLaptops().size());
         Page<Laptop> laptopsList = laptopRepository.findAll(firstPageWithTwoElements);
-        Laptop laptop = laptopsList.stream().filter(laptops -> laptops.getLaptopCore().
-                equalsIgnoreCase(calcLaptopRentDto.getLaptopSelectedCore())).findFirst().orElseThrow(
+        Laptop laptop = laptopsList.stream().filter(laptops -> laptops.getLaptopCores().
+                equalsIgnoreCase(calcLaptopRentDto.getLaptopSelectedCores())).findFirst().orElseThrow(
                 () -> new LaptopException("Laptop with the core does not exist"));
                 Integer integer = laptopTypeCheck(laptop.getLaptopType());
        LaptopSpecificity laptopSpecificity = new LaptopSpecificity();
@@ -109,18 +116,24 @@ public class LaptopServiceImpl implements LaptopServices {
             check=types[0];
         }
   switch (check){
-      case "Better Condition":return 0;
-      case "Good Condition":
+      case "Good Condition":return 0;
+      case "Better Condition":
       case "Perfect Condition":
           return Integer.valueOf(type2.trim());
   }
         return null;
-
    }
 
     @Override
-    public LaptopPrice findLaptopByCore(String laptopId) throws LaptopException {
-        return null;
+    public LaptopPrice findLaptopByCores(String laptopCore) throws LaptopException {
+     Pageable firstPageWithTwoElements = PageRequest.of(0, findAllLaptops().size());
+     Page<Laptop> laptopList = laptopRepository.findAll(firstPageWithTwoElements);
+     Laptop laptopFound =laptopList.stream().filter(laptop -> laptop.getLaptopCores().equalsIgnoreCase(laptopCore)).
+             findFirst().orElseThrow(() -> new LaptopException("Laptop with this core does not exist"));
+     LaptopPrice laptopDto = new LaptopPrice();
+
+     modelMapper.map(laptopFound,laptopDto);
+     return laptopDto;
     }
 
     private boolean notAType(String laptopType){
@@ -165,12 +178,12 @@ public class LaptopServiceImpl implements LaptopServices {
         String[] types=laptopType.split(":");
         log.info("Calculator2-->{}{}",laptopType,integer);
         switch (types[0]){
-            case "regular":
-                return 10.0*hoursSpent;
-            case "children's movie":
-                return 8.0*hoursSpent+(integer/2.0);
-            case "new release":
-                return 15.0*hoursSpent-(integer);
+            case "Good Condition":
+                return 500.00*hoursSpent;
+            case "Better Condition":
+                return 700.00*hoursSpent+(integer/2.0);
+            case "Perfect Condition":
+                return 1000.00*hoursSpent-(integer);
         }
         return null;
     }
