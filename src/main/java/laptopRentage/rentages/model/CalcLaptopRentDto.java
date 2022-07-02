@@ -6,5 +6,5 @@ import lombok.Data;
 public class CalcLaptopRentDto {
     private String username;
     private String laptopSelectedCore;
-    private Integer numOfDays;
+    private Integer hours;
 }

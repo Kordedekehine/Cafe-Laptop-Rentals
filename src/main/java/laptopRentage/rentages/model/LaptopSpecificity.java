@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class LaptopSpecificity {
 
-    private String rentalName;
+    private String userName;
     private String laptopSelected;
-    private Integer numberOfDays;
+    private Integer hours;
     private Double priceOfLaptopUsage;
     private String laptopType;
 }
