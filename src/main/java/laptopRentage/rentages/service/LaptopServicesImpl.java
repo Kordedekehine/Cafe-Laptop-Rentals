@@ -106,7 +106,19 @@ public class LaptopServicesImpl implements LaptopServices {
        return laptopSpecificity;
     }
 
-   private Integer laptopTypeCheck(String laptopType){
+    @Override
+    public LaptopPrice findLaptopByCore(String laptopCore) throws LaptopException {
+        Pageable firstPageWithTwoElements = PageRequest.of(0, findAllLaptops().size());
+        Page<Laptop> laptopList = laptopRepository.findAll(firstPageWithTwoElements);
+        Laptop laptopFound =laptopList.stream().filter(laptop -> laptop.getLaptopCores().equalsIgnoreCase(laptopCore)).
+                findFirst().orElseThrow(() -> new LaptopException("Laptop with this core does not exist"));
+        LaptopPrice laptopDto = new LaptopPrice();
+
+        modelMapper.map(laptopFound,laptopDto);
+        return laptopDto;
+    }
+
+    private Integer laptopTypeCheck(String laptopType){
         String type = laptopType;
         String check = type;
         String type2 = " ";
@@ -124,17 +136,17 @@ public class LaptopServicesImpl implements LaptopServices {
         return null;
    }
 
-    @Override
-    public LaptopPrice findLaptopByCores(String laptopCore) throws LaptopException {
-     Pageable firstPageWithTwoElements = PageRequest.of(0, findAllLaptops().size());
-     Page<Laptop> laptopList = laptopRepository.findAll(firstPageWithTwoElements);
-     Laptop laptopFound =laptopList.stream().filter(laptop -> laptop.getLaptopCores().equalsIgnoreCase(laptopCore)).
-             findFirst().orElseThrow(() -> new LaptopException("Laptop with this core does not exist"));
-     LaptopPrice laptopDto = new LaptopPrice();
-
-     modelMapper.map(laptopFound,laptopDto);
-     return laptopDto;
-    }
+//    @Override
+//    public LaptopPrice findLaptopByCores(String laptopCore) throws LaptopException {
+//     Pageable firstPageWithTwoElements = PageRequest.of(0, findAllLaptops().size());
+//     Page<Laptop> laptopList = laptopRepository.findAll(firstPageWithTwoElements);
+//     Laptop laptopFound =laptopList.stream().filter(laptop -> laptop.getLaptopCores().equalsIgnoreCase(laptopCore)).
+//             findFirst().orElseThrow(() -> new LaptopException("Laptop with this core does not exist"));
+//     LaptopPrice laptopDto = new LaptopPrice();
+//
+//     modelMapper.map(laptopFound,laptopDto);
+//     return laptopDto;
+//    }
 
     private boolean notAType(String laptopType){
         String type = laptopType;

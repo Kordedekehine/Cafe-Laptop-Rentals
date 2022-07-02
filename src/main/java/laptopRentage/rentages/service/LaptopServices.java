@@ -12,6 +12,6 @@ public interface LaptopServices {
     List<LaptopDto> findAllLaptops();
     LaptopDto addLaptop(LaptopDto laptopDto) throws LaptopException;
     LaptopSpecificity calculateLaptopPrice(CalcLaptopRentDto calcLaptopRentDto) throws LaptopException;
-    LaptopPrice findLaptopByCores(String laptopCores) throws LaptopException;
+    LaptopPrice findLaptopByCore(String laptopCore) throws LaptopException;
 
 }
