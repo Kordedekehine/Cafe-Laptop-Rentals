@@ -19,15 +19,15 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@Slf4j
+//@Slf4j
 @RestController
-@RequestMapping("/videoRental")
+@RequestMapping("/laptops")
 public class LaptopController {
 
     @Autowired
    LaptopServices laptopServices;
 
-    @PostMapping("/add")
+   @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody LaptopDto laptopDto){
         try {
             return new ResponseEntity<>(laptopServices.addLaptop(laptopDto), HttpStatus.OK);
@@ -36,7 +36,7 @@ public class LaptopController {
         }
     }
 
-    @PostMapping("/listAll")
+    @GetMapping("/listAll")
     public ResponseEntity<?> findAllLaptops(){
         List<LaptopDto> laptop = laptopServices.findAllLaptops().stream().map(
                 laptopDto -> laptopDto.add(linkTo(methodOn(LaptopController.class).

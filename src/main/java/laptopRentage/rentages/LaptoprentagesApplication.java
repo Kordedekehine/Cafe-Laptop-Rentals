@@ -9,7 +9,9 @@ import org.springframework.context.annotation.ComponentScan;
 public class LaptoprentagesApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(LaptoprentagesApplication.class, args);
+		System.out.println("Finished running Laptop rentals application");
 	}
 
 }
