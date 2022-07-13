@@ -2,11 +2,12 @@ package laptopRentage.rentages.service;
 
 import laptopRentage.rentages.exception.LaptopException;
 import laptopRentage.rentages.model.*;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Component
 public interface LaptopServices {
 
     List<LaptopDto> findAllLaptops();

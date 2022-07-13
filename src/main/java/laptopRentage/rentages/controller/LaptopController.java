@@ -6,10 +6,14 @@ import laptopRentage.rentages.model.LaptopDto;
 import laptopRentage.rentages.model.LaptopPrice;
 import laptopRentage.rentages.model.LaptopSpecificity;
 import laptopRentage.rentages.service.LaptopServices;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,10 +22,11 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-//@Slf4j
-@RestController
+@Slf4j
+@Controller
 @RequestMapping("/laptops")
 public class LaptopController {
+
 
     @Autowired
    LaptopServices laptopServices;
