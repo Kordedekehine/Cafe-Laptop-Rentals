@@ -1,0 +1,11 @@
+{
+  "name": "Laptop-rental-cafe-demo",
+  "addons": [
+    "logentries"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/maven"
+    }
+  ]
+}
