@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.awt.*;
 
 @Entity
+@Table(name = "laptops")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

@@ -6,6 +6,7 @@ import laptopRentage.rentages.repository.LaptopRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,9 +21,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LaptopServicesImpl implements LaptopServices {
 
+    @Autowired
     LaptopRepository laptopRepository;
 
-    ModelMapper modelMapper =new ModelMapper();
+    @Autowired
+    ModelMapper modelMapper ;
+
+
+
 
     @Autowired
     public LaptopServicesImpl(LaptopRepository laptopRepository, ModelMapper modelMapper) {

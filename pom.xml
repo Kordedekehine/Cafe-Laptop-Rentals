@@ -8,11 +8,11 @@
 		<version>2.7.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>movieRentage</groupId>
+	<groupId>laptopRentage</groupId>
 	<artifactId>rentages</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Laptoprentages</name>
-	<description>Movie rentages</description>
+	<description>Laptop rentages</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
@@ -31,9 +31,20 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
-			<version>2.3.5</version>
+			<version>2.4.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 
 		<dependency>
