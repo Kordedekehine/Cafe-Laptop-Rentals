@@ -1,32 +1,37 @@
 package laptopRentage.rentages.model;
 
+import laptopRentage.rentages.AuditEntity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.awt.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "laptops")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Laptop {
+public class Laptop extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer laptopId;
     @Column
-    private String laptopCores;
+    private Cores laptopCores; //core what
     @Column
-    private String laptopType;
+    private String laptopType;  //7th or 8th gen
     @Column
-    private Brand laptopBrand;
+    private String laptopBrand;  //whose brand
 
     @Column
-    private String laptopColor;
+    private Color laptopColor; //laptop color
 
     @Column
-    private Double laptopPrice;
+    private Double laptopPrice; //price of laptop
+
+    @Column
+    private LocalDateTime rentedAt;
 }

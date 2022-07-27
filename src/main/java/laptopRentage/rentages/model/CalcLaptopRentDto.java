@@ -6,5 +6,6 @@ import lombok.Data;
 public class CalcLaptopRentDto {
     private String username;
     private String laptopSelectedCores;
+    private String laptopBrand;
     private Integer hours;
 }

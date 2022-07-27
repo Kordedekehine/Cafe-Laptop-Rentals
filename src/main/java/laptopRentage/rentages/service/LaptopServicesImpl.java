@@ -6,11 +6,9 @@ import laptopRentage.rentages.repository.LaptopRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,16 +23,9 @@ public class LaptopServicesImpl implements LaptopServices {
     LaptopRepository laptopRepository;
 
     @Autowired
-    ModelMapper modelMapper ;
+    ModelMapper modelMapper = new ModelMapper() ;
 
 
-
-
-    @Autowired
-    public LaptopServicesImpl(LaptopRepository laptopRepository, ModelMapper modelMapper) {
-        this.laptopRepository = laptopRepository;
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public List<LaptopDto> findAllLaptops() {
@@ -53,7 +44,7 @@ public class LaptopServicesImpl implements LaptopServices {
         if (laptopDto.getLaptopBrand()==null||laptopDto.getLaptopBrand().toString().equals("")){
             throw new LaptopException("Laptop Brand cannot be null");
         }
-        if (laptopDto.getLaptopType().isEmpty()||laptopDto.getLaptopType().isBlank()||laptopDto.getLaptopType()==null){
+        if (laptopDto.getLaptopType()==null||laptopDto.getLaptopType().toString().equals("")){
             throw new LaptopException("Laptop Type cannot be null");
         }
         if (laptopDto.getLaptopColor()==null||laptopDto.getLaptopColor().toString().equals("")){
@@ -66,12 +57,14 @@ public class LaptopServicesImpl implements LaptopServices {
             throw new LaptopException("Laptop type is invalid");
         }
         Laptop laptop = new Laptop();
-        laptop.setLaptopBrand(laptopBrandCheck(laptop.getLaptopCores()));
-        laptop.setLaptopColor(laptopDto.getLaptopColor());
-        laptop.setLaptopType(laptop.getLaptopType());
-        laptop.setLaptopPrice(laptop.getLaptopPrice());
-        laptop.setLaptopCores(laptop.getLaptopCores());
+        laptop.setLaptopCores(laptopCoreCheck(laptopDto.getLaptopCores()));
+       // laptop.setLaptopCores(laptopCoreCheck(laptop.getLaptopCores()));
+        laptop.setLaptopColor(laptopColorCheck(laptopDto.getLaptopColor()));
+        laptop.setLaptopType(laptopDto.getLaptopType());
+        laptop.setLaptopPrice(setLaptopPrice(laptop.getLaptopType()));
+        laptop.setLaptopBrand(laptopDto.getLaptopBrand());
         laptopRepository.save(laptop);
+        modelMapper.map(laptop,laptopDto);
         return laptopDto;
     }
 
@@ -79,16 +72,15 @@ public class LaptopServicesImpl implements LaptopServices {
         laptopType = laptopType.toLowerCase();
         String [] types = laptopType.split(":");
         switch (types[0]){
-            case "Better Condition": return 500.00;
-            case "Good Condition":return 700.00;
-            case "Perfect Condition":return 1000.00;
+            case "better condition": return 500.00;
+            case "good condition":return 700.00;
+            case "perfect condition":return 1000.00; //quite a blocker
         }
         return null;
     }
 
-
     @Override
-    public LaptopSpecificity calculateLaptopPrice(CalcLaptopRentDto calcLaptopRentDto) throws LaptopException {
+    public LaptopUsernameAndPrice calculateLaptopPrice(CalcLaptopRentDto calcLaptopRentDto) throws LaptopException {
         if (calcLaptopRentDto.getHours() < 1){
             throw new LaptopException("Hours spent is invalid");
         }
@@ -96,33 +88,57 @@ public class LaptopServicesImpl implements LaptopServices {
         calcLaptopRentDto.getUsername().isBlank()){
            throw new LaptopException("Username cannot be empty");
         }
+        if (calcLaptopRentDto.getLaptopBrand()==null|| calcLaptopRentDto.getLaptopBrand().isEmpty() ||
+                calcLaptopRentDto.getLaptopBrand().isBlank()){
+            throw new LaptopException("Username cannot be empty");
+        }
         Pageable firstPageWithTwoElements = PageRequest.of(0, findAllLaptops().size());
         Page<Laptop> laptopsList = laptopRepository.findAll(firstPageWithTwoElements);
-        Laptop laptop = laptopsList.stream().filter(laptops -> laptops.getLaptopCores().
-                equalsIgnoreCase(calcLaptopRentDto.getLaptopSelectedCores())).findFirst().orElseThrow(
+//        Laptop laptop = laptopsList.stream().filter(laptops -> laptops.getLaptopCores()
+//                .equals(calcLaptopRentDto.getLaptopSelectedCores())).findFirst().orElseThrow(
+        /**
+         * let's use the laptop brand as the search value for now,till we arrive at a reasonable flow
+         */
+        // TODO: 7/27/2022  
+        Laptop laptop = laptopsList.stream().filter(laptops -> laptops.getLaptopBrand().
+                equals(calcLaptopRentDto.getLaptopBrand())).findFirst().orElseThrow(
                 () -> new LaptopException("Laptop with the core does not exist"));
                 Integer integer = laptopTypeCheck(laptop.getLaptopType());
-       LaptopSpecificity laptopSpecificity = new LaptopSpecificity();
+       LaptopUsernameAndPrice laptopSpecificity = new LaptopUsernameAndPrice();
        modelMapper.map(laptop,laptopSpecificity);
        laptopSpecificity.setUserName(calcLaptopRentDto.getUsername());
        laptopSpecificity.setHours(calcLaptopRentDto.getHours());
-       laptopSpecificity.setLaptopSelected(laptopSpecificity.getLaptopSelected());
+      // laptopSpecificity.setLaptopSelected(laptopSpecificity.getLaptopSelected());
+        laptopSpecificity.setLaptopBrandSelected(calcLaptopRentDto.getLaptopBrand());
        laptopSpecificity.setPriceOfLaptopUsage(calculateLaptopPriceBasedOnLaptopType(integer,laptop.getLaptopType(),calcLaptopRentDto.getHours()));
 
        return laptopSpecificity;
     }
 
     @Override
-    public LaptopPrice findLaptopByCore(String laptopCore) throws LaptopException {
+    public LaptopPrice findLaptopByBrand(String laptopBrand) throws LaptopException {
         Pageable firstPageWithTwoElements = PageRequest.of(0, findAllLaptops().size());
         Page<Laptop> laptopList = laptopRepository.findAll(firstPageWithTwoElements);
-        Laptop laptopFound =laptopList.stream().filter(laptop -> laptop.getLaptopCores().equalsIgnoreCase(laptopCore)).
-                findFirst().orElseThrow(() -> new LaptopException("Laptop with this core does not exist"));
+        Laptop laptopFound =laptopList.stream().filter(laptop -> laptop.getLaptopBrand().equalsIgnoreCase(laptopBrand)).
+                findFirst().orElseThrow(() -> new LaptopException("Laptop with this Brand tag does not exist"));
         LaptopPrice laptopDto = new LaptopPrice();
 
         modelMapper.map(laptopFound,laptopDto);
         return laptopDto;
     }
+
+
+//    @Override
+//    public LaptopPrice findLaptopByCore(String laptopCore) throws LaptopException {
+//        Pageable firstPageWithTwoElements = PageRequest.of(0, findAllLaptops().size());
+//        Page<Laptop> laptopList = laptopRepository.findAll(firstPageWithTwoElements);
+//        Laptop laptopFound =laptopList.stream().filter(laptop -> laptop.getLaptopCores().equals(laptopCore)).
+//                findFirst().orElseThrow(() -> new LaptopException("Laptop with this core does not exist"));
+//        LaptopPrice laptopDto = new LaptopPrice();
+//
+//        modelMapper.map(laptopFound,laptopDto);
+//        return laptopDto;
+//    }
 
     private Integer laptopTypeCheck(String laptopType){
         String type = laptopType;
@@ -161,31 +177,41 @@ public class LaptopServicesImpl implements LaptopServices {
             String [] types = type.split(":");
             check=types[0].trim();
         }
-       if (check.equalsIgnoreCase("Perfect")|| check.equalsIgnoreCase("MacBook")||
-       check.equalsIgnoreCase("Mac M1 Air")){
+       if (check.equalsIgnoreCase("Perfect Condition")|| check.equalsIgnoreCase("Better Condition")||
+       check.equalsIgnoreCase("Good Condition")){
          return false;
        }
        return true;
     }
 
-    private Brand laptopBrandCheck(String laptopBrand){
-        if (laptopBrand.equalsIgnoreCase("MacBook")){
-            return Brand.MacBook;
+    private Color laptopColorCheck(String laptopColor){
+        if (laptopColor.equalsIgnoreCase("White")){
+            return Color.white;
         }
-        if (laptopBrand.equalsIgnoreCase("Dell")){
-            return Brand.Dell;
+        if (laptopColor.equalsIgnoreCase("Black")){
+            return Color.black;
         }
-        if (laptopBrand.equalsIgnoreCase("HP")){
-            return Brand.HP;
+        if (laptopColor.equalsIgnoreCase("Ash")){
+            return Color.ash;
         }
-        if (laptopBrand.equalsIgnoreCase("Asus")){
-            return Brand.Asus;
+        return null;
+    }
+
+    private Cores laptopCoreCheck(String laptopCore){
+        if (laptopCore.equalsIgnoreCase("macAir")){
+            return Cores.macAir;
         }
-        if (laptopBrand.equalsIgnoreCase("Toshiba")){
-            return Brand.Toshiba;
+        if (laptopCore.equalsIgnoreCase("MacPro")){
+            return Cores.macBookPro;
         }
-        if (laptopBrand.equalsIgnoreCase("Lenovo")){
-            return Brand.Lenovo;
+        if (laptopCore.equalsIgnoreCase("corei5")){
+            return Cores.corei5;
+        }
+        if (laptopCore.equalsIgnoreCase("corei6")){
+            return Cores.corei6;
+        }
+        if (laptopCore.equalsIgnoreCase("Corei7")){
+            return Cores.corei7;
         }
         return null;
     }
