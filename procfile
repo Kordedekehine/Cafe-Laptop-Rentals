@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -Dserver.port=$PORT -jar target/*.jar laptopRentage.rentages.LaptoprentagesApplication
+web: java $JAVA_OPTS -Dserver.port=$PORT -jar target/*.jar LaptoprentagesApplication

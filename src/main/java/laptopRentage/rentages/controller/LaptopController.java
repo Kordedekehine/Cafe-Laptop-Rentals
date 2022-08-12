@@ -1,5 +1,6 @@
 package laptopRentage.rentages.controller;
 
+//import io.swagger.annotations.Api;
 import laptopRentage.rentages.exception.LaptopException;
 import laptopRentage.rentages.model.CalcLaptopRentDto;
 import laptopRentage.rentages.model.LaptopDto;
@@ -7,7 +8,6 @@ import laptopRentage.rentages.model.LaptopPrice;
 import laptopRentage.rentages.model.LaptopUsernameAndPrice;
 import laptopRentage.rentages.service.LaptopServices;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -23,6 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Slf4j
 @RestController
 @RequestMapping("/rentage")
+//@Api(value = "Korede Rental Laptops Cafe " ,  description= "Laptop that offer free coffee and rents Laptops out to programmers")
 public class LaptopController {
 
     @Autowired
