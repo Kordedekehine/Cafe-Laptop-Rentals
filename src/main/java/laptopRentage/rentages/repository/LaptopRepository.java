@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LaptopRepository extends PagingAndSortingRepository<Laptop,Integer> {
-    Page<Laptop> findByLaptopCores(String laptopCores, Pageable firstPageWithTwoElements);
+    Page<Laptop> findByLaptopBrand(String laptopBrand, Pageable firstPageWithTwoElements);
 }
